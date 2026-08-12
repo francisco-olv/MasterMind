@@ -50,15 +50,36 @@ if st.button("Submit Guess", disabled=st.session_state.game_over):
         # 3. Store the attempt in session state: (guess_string, blacks, whites)
         st.session_state.attempts.append((formatted_guess, blacks, whites))
         
-        st.success(f"Guess submitted: {formatted_guess}")
+        # 4. Check win condition
+        if blacks == 4:
+            st.session_state.game_over = True
+            st.balloons()
+            st.success(f"🎉 Congratulations! You guessed the secret code in {len(st.session_state.attempts)} attempt(s)!")
+            
+        # 5. Check loss condition (max 10 attempts)
+        elif len(st.session_state.attempts) >= 10:
+            st.session_state.game_over = True
+            secret_str = "".join(st.session_state.secret_code)
+            st.error(f"💥 Game Over! You reached the limit of 10 attempts. The secret code was: {secret_str}")
+        else:
+            st.success(f"Guess submitted: {formatted_guess}")
         
     except ValueError as e:
         st.error(e)
 
 # -----------------------------------------------------------------------------
-# TEMPORARY DEBUG PANEL (For testing session state persistence)
+# RESET GAME OPTION
+# -----------------------------------------------------------------------------
+if st.session_state.game_over:
+    if st.button("🔄 Play Again"):
+        st.session_state.clear()
+        st.rerun()
+
+# -----------------------------------------------------------------------------
+# TEMPORARY DEBUG PANEL (For testing win/loss flow)
 # -----------------------------------------------------------------------------
 st.divider()
 st.write("🕵️ **Debug Panel (Testing session state):**")
 st.write(f"**Secret Code:** `{st.session_state.secret_code}`")
-st.write(f"**Attempts History:** `{st.session_state.attempts}`")
+st.write(f"**Attempts Count:** `{len(st.session_state.attempts)} / 10`")
+st.write(f"**Game Over:** `{st.session_state.game_over}`")
