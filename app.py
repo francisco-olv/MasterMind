@@ -61,25 +61,37 @@ if st.button("Submit Guess", disabled=st.session_state.game_over):
             st.session_state.game_over = True
             secret_str = "".join(st.session_state.secret_code)
             st.error(f"💥 Game Over! You reached the limit of 10 attempts. The secret code was: {secret_str}")
-        else:
-            st.success(f"Guess submitted: {formatted_guess}")
         
     except ValueError as e:
         st.error(e)
 
 # -----------------------------------------------------------------------------
+# ATTEMPTS HISTORY TABLE
+# -----------------------------------------------------------------------------
+if st.session_state.attempts:
+    st.divider()
+    st.subheader("📜 Attempt History")
+    
+    # Render attempts in reverse order so the latest guess appears on top
+    for idx, (guess, blacks, whites) in enumerate(reversed(st.session_state.attempts)):
+        attempt_num = len(st.session_state.attempts) - idx
+        
+        # Build visual feedback string using square emojis
+        feedback_emojis = "⬛ " * blacks + "⬜ " * whites
+        if not feedback_emojis:
+            feedback_emojis = "❌ No matches"
+            
+        # Format guess with spaced letters for readability
+        spaced_guess = " ".join(list(guess))
+        
+        # Display each attempt formatted neatly inside a container
+        st.write(f"**Attempt #{attempt_num:02d}:** `{spaced_guess}` ➔ {feedback_emojis}")
+
+# -----------------------------------------------------------------------------
 # RESET GAME OPTION
 # -----------------------------------------------------------------------------
 if st.session_state.game_over:
+    st.divider()
     if st.button("🔄 Play Again"):
         st.session_state.clear()
         st.rerun()
-
-# -----------------------------------------------------------------------------
-# TEMPORARY DEBUG PANEL (For testing win/loss flow)
-# -----------------------------------------------------------------------------
-st.divider()
-st.write("🕵️ **Debug Panel (Testing session state):**")
-st.write(f"**Secret Code:** `{st.session_state.secret_code}`")
-st.write(f"**Attempts Count:** `{len(st.session_state.attempts)} / 10`")
-st.write(f"**Game Over:** `{st.session_state.game_over}`")
