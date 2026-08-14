@@ -76,16 +76,11 @@ if st.session_state.attempts:
     for idx, (guess, blacks, whites) in enumerate(reversed(st.session_state.attempts)):
         attempt_num = len(st.session_state.attempts) - idx
         
-        # Build visual feedback string using square emojis
-        feedback_emojis = "⬛ " * blacks + "⬜ " * whites
-        if not feedback_emojis:
-            feedback_emojis = "❌ No matches"
-            
         # Format guess with spaced letters for readability
         spaced_guess = " ".join(list(guess))
         
-        # Display each attempt formatted neatly inside a container
-        st.write(f"**Attempt #{attempt_num:02d}:** `{spaced_guess}` ➔ {feedback_emojis}")
+        # Display each attempt formatted with explicit match counts
+        st.write(f"**Attempt #{attempt_num:02d}:** `{spaced_guess}` ➔ ⬛ **{blacks}** | ⬜ **{whites}**")
 
 # -----------------------------------------------------------------------------
 # RESET GAME OPTION
